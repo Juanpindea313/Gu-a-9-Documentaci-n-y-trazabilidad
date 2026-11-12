@@ -17,6 +17,13 @@ function guardar(ticket) {
   return ticket;
 }
 
+/**
+ * Valida y registra la venta de un tiquete de Chance para un sorteo abierto.
+ * @param {Object} vendedor Usuario autenticado que realiza la venta.
+ * @param {{sorteoId: number, apuestas: Array, cliente?: string}} datos Datos de la venta.
+ * @returns {Object} Tiquete creado con su código y total.
+ * @throws {AppError} Si el sorteo no admite ventas o las apuestas no son válidas.
+ */
 function venderChance(vendedor, { sorteoId, apuestas, cliente }) {
   const sorteo = sorteos.obtener(sorteoId);
   sorteos.verificarVentaPermitida(sorteo, 'CHANCE');
@@ -41,6 +48,13 @@ function venderChance(vendedor, { sorteoId, apuestas, cliente }) {
   });
 }
 
+/**
+ * Valida y registra la venta de un tiquete de Baloto para un sorteo abierto.
+ * @param {Object} vendedor Usuario autenticado que realiza la venta.
+ * @param {{sorteoId: number, jugadas: Array, cliente?: string}} datos Datos de la venta.
+ * @returns {Object} Tiquete creado con su código y total.
+ * @throws {AppError} Si el sorteo no admite ventas o las jugadas no son válidas.
+ */
 function venderBaloto(vendedor, { sorteoId, jugadas, cliente }) {
   const sorteo = sorteos.obtener(sorteoId);
   sorteos.verificarVentaPermitida(sorteo, 'BALOTO');
@@ -88,6 +102,14 @@ function consultar(codigo) {
   };
 }
 
+/**
+ * Anula un tiquete activo cuando el usuario tiene permiso y se cumplen los plazos.
+ * @param {string} codigo Código único del tiquete.
+ * @param {Object} usuario Usuario que solicita la anulación.
+ * @param {string} motivo Justificación obligatoria.
+ * @returns {Object} Tiquete actualizado a estado ANULADO.
+ * @throws {AppError} Si el tiquete no existe, no pertenece al vendedor o no es anulable.
+ */
 function anular(codigo, usuario, motivo) {
   const ticket = buscar(codigo);
 
@@ -108,6 +130,13 @@ function anular(codigo, usuario, motivo) {
   return ticket;
 }
 
+/**
+ * Registra el pago de un premio vigente y marca el tiquete como pagado.
+ * @param {string} codigo Código único del tiquete ganador.
+ * @param {Object} usuario Usuario que realiza el pago.
+ * @returns {Object} Registro del pago efectuado.
+ * @throws {AppError} Si el sorteo no se ha jugado o el premio no puede pagarse.
+ */
 function pagarPremio(codigo, usuario) {
   const ticket = buscar(codigo);
   const sorteo = sorteos.obtener(ticket.sorteoId);
